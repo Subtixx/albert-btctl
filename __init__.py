@@ -223,11 +223,14 @@ class Plugin(PluginInstance, IndexQueryHandler):
             self.bluetoothDevices.append(device)
         
     def handleGlobalQuery(self, query: Query) -> List[RankItem]:
+        if query.trigger == '':
+            return []
+        
         filtered : List[RankItem] = []
         
         s = query.string.strip().lower()
-        if s and query.trigger != '':
-            for device in self.bluetoothDevices:
-                if s in device.name.lower():
-                    filtered.append(device.rankItem())
+        for device in self.bluetoothDevices:
+            if not s or s in device.name.lower():
+                filtered.append(device.rankItem())
+            
         return filtered
